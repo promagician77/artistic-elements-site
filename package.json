@@ -1,0 +1,9 @@
+{
+  "name": "set-check-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static Set Check demo site. No build step.",
+  "scripts": {
+    "start": "npx --yes serve . -l 4179"
+  }
+}
