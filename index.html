@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Set Check: interior drawing sets, checked before they reach your CAD lead</title>
+<meta name="description" content="Reads an exported interior drawing set and checks sheet numbers, the sheet index, callouts, drawing numbers, revisions and dimension strings.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/bodoni-moda-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/overpass-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.mjs"></script>
+</head>
+<body>
+<a class="skip" href="#bench">Skip to the checker</a>
+<header class="top">
+  <div class="wrap top-in">
+    <p class="mark">Set Check</p>
+    <nav aria-label="On this page">
+      <ul>
+        <li><a href="#bench">Check a set</a></li>
+        <li><a href="#checks">What it checks</a></li>
+        <li><a href="#solo">ArchiCAD 25 Solo</a></li>
+        <li><a href="#handoff">Hand-off</a></li>
+        <li><a href="#measured">Measured</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <h1 id="hero-title">The redlines I catch before your CAD lead has to</h1>
+    <p class="lede">Set Check reads an exported interior drawing set the way a CAD lead reads it: sheet numbers, the sheet index, every elevation, section and detail callout, drawing numbers, revisions, and dimension strings that have to add up to their overall.</p>
+  </section>
+
+  <section id="bench" class="bench wrap" aria-labelledby="bench-title">
+    <h2 id="bench-title" class="visually-hidden">Check a set</h2>
+    <div class="controls">
+      <div class="sources" role="group" aria-label="Which set to check">
+        <button type="button" class="src" data-set="planted" aria-pressed="true">Test set with ten planted mistakes</button>
+        <button type="button" class="src" data-set="clean" aria-pressed="false">Clean test set</button>
+        <label class="src file-src" for="own-file">Your own PDF<input id="own-file" type="file" accept="application/pdf,.pdf"></label>
+      </div>
+      <p class="honest">The test sets are drawn by a script to exercise the checker. They are not ArchiCAD output and not portfolio work. A PDF you choose is read in this browser and goes nowhere.</p>
+    </div>
+    <p class="summary" id="summary" aria-live="polite">Reading the set&hellip;</p>
+    <div class="tabs" id="sheet-tabs" role="group" aria-label="Sheets"></div>
+    <div class="bench-grid">
+      <figure class="viewer">
+        <div class="viewer-tools">
+          <span id="sheet-label" class="sheet-label"></span>
+          <button type="button" id="zoom" class="tool" aria-pressed="false">Zoom to finding</button>
+        </div>
+        <div class="paper" id="paper" tabindex="0" role="region" aria-label="Sheet preview">
+          <div class="stage" id="stage">
+            <canvas id="canvas" aria-hidden="true"></canvas>
+            <svg id="overlay" class="overlay" aria-hidden="true"></svg>
+          </div>
+        </div>
+        <figcaption id="caption" class="caption"></figcaption>
+      </figure>
+      <aside class="findings" aria-labelledby="findings-title">
+        <h3 id="findings-title">Findings</h3>
+        <ol id="findings" class="finding-list"></ol>
+        <details class="rules">
+          <summary>Your standards</summary>
+          <p><label for="rule-sheet">Sheet number pattern</label><input id="rule-sheet" type="text" spellcheck="false"></p>
+          <p><label for="rule-file">File name pattern</label><input id="rule-file" type="text" spellcheck="false"></p>
+          <p><button type="button" id="recheck" class="tool">Check again</button></p>
+          <p class="hint">Patterns are regular expressions. The defaults follow US National CAD Standard sheet numbers (I-101) and a sample file name, <span id="file-example"></span>.</p>
+        </details>
+      </aside>
+    </div>
+  </section>
+
+  <section id="checks" class="wrap" aria-labelledby="checks-title">
+    <h2 id="checks-title">What it checks</h2>
+    <p class="intro">Each check is a redline a CAD lead would otherwise write by hand. The right-hand column is the mistake planted for it in the test set.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Checks">
+      <table class="checks">
+        <thead><tr><th scope="col">Check</th><th scope="col">Severity</th><th scope="col">Planted in the test set</th></tr></thead>
+        <tbody id="checks-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="solo" class="band" aria-labelledby="solo-title">
+    <div class="wrap">
+      <h2 id="solo-title">Working in your ArchiCAD 25 Solo template</h2>
+      <p class="intro">Four facts about your studio standard that shape how files move between us.</p>
+      <dl class="facts">
+        <div><dt>Back-saving goes one version at a time</dt><dd>A file made in Archicad 28 saves back only to 27. Work for you is drawn in 25 from the start, never saved down from a newer version.</dd></div>
+        <div><dt>New licenses start at version 26</dt><dd>Graphisoft's cloud licenses run Archicad 26 and later. Running 25 takes a key-based license, which new customers could buy only until December 31, 2024.</dd></div>
+        <div><dt>Solo has no Teamwork, Cinema 4D rendering or Hotlinks</dt><dd>Typical details live in your template's favorites and view map rather than in hotlinked modules, and work comes back as whole .pln files. File names and revisions carry more weight because of it.</dd></div>
+        <div><dt>Publisher can name the files</dt><dd>Publisher items can be renamed by layout ID, name or a custom name, so the exported PDFs follow your file-naming standard without hand-renaming.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="handoff" class="wrap" aria-labelledby="handoff-title">
+    <h2 id="handoff-title">How a set comes back to you</h2>
+    <ol class="steps">
+      <li><h3>Redlines logged</h3><p>Designer plans and redlines arrive in Telegram. Each redline is logged against its sheet so none is missed.</p></li>
+      <li><h3>Drafted in your template</h3><p>Plans, ceiling plans, elevations, sections and millwork details, in your layers, pens, favorites and title block.</p></li>
+      <li><h3>Checked before it is sent</h3><p>The Publisher set exports the PDF and Set Check reads it. Every finding is fixed in the model, never in the PDF.</p></li>
+      <li><h3>Posted with a note</h3><p>The PDF, the .pln and the check report go into the thread with a short list of what changed since the last issue.</p></li>
+    </ol>
+  </section>
+
+  <section id="measured" class="band soft" aria-labelledby="measured-title">
+    <div class="wrap two">
+      <div>
+        <h2 id="measured-title">What I measured</h2>
+        <ul class="ticks" id="measured-list"></ul>
+      </div>
+      <div>
+        <h2 id="not-measured-title">What I did not measure</h2>
+        <ul class="open" id="not-measured-list"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>Prepared by Santiago for the Artistic Elements CAD team, November 2026. A working sample to talk over; it asks search engines not to index it.</p>
+    <p class="small">PDF reading by pdf.js (Apache 2.0). Type: Bodoni Moda and Overpass, both under the SIL Open Font License.</p>
+  </div>
+</footer>
+</body>
+</html>
